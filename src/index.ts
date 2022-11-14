@@ -1,7 +1,20 @@
-import "dotenv/config";
-import { Client, GatewayIntentBits, REST } from "discord.js";
+import path from "path";
+import { config } from "dotenv";
+import { fetchCommands } from "@services/setup/fetch-commands";
+import { registerEvents } from "@services/setup/register-events";
+import { client, connectDiscord } from "@services/setup/connection-discord";
 
-const TOKEN = process.env.BOT_TOKEN;
+config({
+  path: path.join(path.resolve(), ".env"),
+});
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-const rest = new REST({ version: "10" }).setToken(TOKEN);
+const initialize = async () => {
+  await fetchCommands.fetch();
+  await registerEvents.register(client);
+  await connectDiscord.connect();
+  // await connectMongoDB.connect();
+};
+
+initialize();
+
+export { initialize };
