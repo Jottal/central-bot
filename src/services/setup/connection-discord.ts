@@ -9,7 +9,12 @@ const client = new Client({
 
 const connect = async () => {
   try {
-    await client.login(process.env.BOT_TOKEN);
+    const TOKEN =
+      process.env.NODE_ENV === "dev"
+        ? process.env.DEV_BOT_TOKEN
+        : process.env.PROD_BOT_TOKEN;
+
+    await client.login(TOKEN);
   } catch (err) {
     await logError.log(err);
   }
