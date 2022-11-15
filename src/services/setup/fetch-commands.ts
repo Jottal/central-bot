@@ -63,7 +63,10 @@ const fetch = async () => {
       }
     );
 
-    console.log("\x1b[42m%s\x1b[0m", "✔ Todos os comandos foram buscados.");
+    console.log(
+      "\x1b[42m%s\x1b[0m",
+      `✔ [${commandsList.length}] Todos os comandos foram buscados.`
+    );
   } catch (err) {
     await logError.log(err);
   }

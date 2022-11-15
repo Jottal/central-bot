@@ -26,7 +26,9 @@ const fetchFiles = (filePath: string, previousFiles?: string[]) => {
 
 const register = async (client: Client) => {
   try {
-    fetchFiles(eventsFolder).forEach(async (value) => {
+    const events = fetchFiles(eventsFolder);
+
+    events.forEach(async (value) => {
       const event = (await require(`${value}`).event) as Event;
       if (event.once) {
         client.once(event.name, (...args: any[]) => event.execute(...args));
@@ -34,7 +36,11 @@ const register = async (client: Client) => {
         client.on(event.name, (...args: any[]) => event.execute(...args));
       }
     });
-    console.log("\x1b[42m%s\x1b[0m", "✔ Todos os eventos foram registrados.");
+
+    console.log(
+      "\x1b[42m%s\x1b[0m",
+      `✔ [${events.length}] Todos os eventos foram registrados.`
+    );
   } catch (error: any) {
     await logError.log(error);
   }

@@ -4,7 +4,11 @@ import { logError } from "@services/utils/log-error";
 
 const client = new Client({
   shardCount: 1,
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMembers,
+  ],
 });
 
 const connect = async () => {
