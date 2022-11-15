@@ -4,6 +4,8 @@ import { commandsList } from "@services/setup/fetch-commands";
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
   try {
+    if (!interaction.isCommand()) return;
+
     const command = commandsList.find(
       (c) => c.name === interaction.commandName
     );

@@ -1,9 +1,9 @@
-import { Date, Document, model, Model, models, Schema } from "mongoose";
+import { Document, model, Model, models, Schema } from "mongoose";
 
 interface IUserSchema extends Document {
   idDiscord: string;
   verified: boolean;
-  birthday: Date;
+  birthday: string;
 }
 
 const userSchema = new Schema({
@@ -16,7 +16,7 @@ const userSchema = new Schema({
     required: true,
   },
   birthday: {
-    type: Date,
+    type: String,
     required: false,
   },
 });

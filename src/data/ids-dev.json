@@ -1,5 +1,8 @@
 {
   "channels": {
+    "register": {
+      "central": "998209873894449264"
+    },
     "logs": {
       "central": "998209873894449264"
     }
