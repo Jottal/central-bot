@@ -12,7 +12,7 @@ import { identifiers } from "@components/identifiers";
 const execute = async (client: Client) => {
   try {
     // const registerChannel = client.channels.cache.get(
-    //   identifiers.channels.register.central
+    //   identifiers.central.channels.register
     // ) as TextChannel;
 
     // const row = new ActionRowBuilder<ButtonBuilder>().addComponents(

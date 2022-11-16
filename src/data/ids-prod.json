@@ -1,10 +1,18 @@
 {
-  "channels": {
-    "register": {
-      "central": "?"
+  "central": {
+    "id": "622592099380101140",
+    "roles": {
+      "adventure": "632345109803040808",
+      "age13": "",
+      "age14": "",
+      "age15": "",
+      "age16": "",
+      "age17": "",
+      "age18": ""
     },
-    "logs": {
-      "central": "836196633485508618"
+    "channels": {
+      "register": "?",
+      "logs": "836196633485508618"
     }
   }
 }
