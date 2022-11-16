@@ -4,6 +4,7 @@ interface IUserSchema extends Document {
   idDiscord: string;
   verified: boolean;
   birthday: string;
+  lastAge: number;
 }
 
 const userSchema = new Schema({
@@ -17,6 +18,10 @@ const userSchema = new Schema({
   },
   birthday: {
     type: String,
+    required: false,
+  },
+  lastAge: {
+    type: Number,
     required: false,
   },
 });

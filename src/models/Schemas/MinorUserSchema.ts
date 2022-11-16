@@ -3,6 +3,7 @@ import { Document, model, Model, models, Schema } from "mongoose";
 interface IMinorUserSchema extends Document {
   idDiscord: string;
   birthday: string;
+  lastAge: number;
 }
 
 const minorUserSchema = new Schema({
@@ -13,6 +14,10 @@ const minorUserSchema = new Schema({
   birthday: {
     type: String,
     required: true,
+  },
+  lastAge: {
+    type: Number,
+    required: false,
   },
 });
 

@@ -27,9 +27,22 @@ const addRole = async (idMember: string, roleString: string) => {
   }
 };
 
+const removeRole = async (idMember: string, roleString: string) => {
+  try {
+    const guild = client.guilds.cache.get(identifiers.central.id);
+    const member = guild.members.cache.get(idMember);
+    const role = await getRole(roleString);
+
+    await member.roles.remove(role);
+  } catch (error: any) {
+    await logError.log(error);
+  }
+};
+
 type ClientUtils = Service & {
   getRole: (id: string) => Promise<Role | null>;
   addRole: (idMember: string, roleString: string) => Promise<void>;
+  removeRole: (idMember: string, roleString: string) => Promise<void>;
 };
 
 const clientUtils: ClientUtils = {
@@ -38,6 +51,7 @@ const clientUtils: ClientUtils = {
     "Serviço que disponibiliza métodos getters e setters utilizando a API do Discord.",
   getRole,
   addRole,
+  removeRole,
 };
 
 export { clientUtils };
