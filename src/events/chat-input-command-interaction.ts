@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, Events } from "discord.js";
-import { logError } from "@services/utils/log-error";
 import { commandsList } from "@services/setup/fetch-commands";
+import { logError } from "@services/utils/log-error";
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
   try {

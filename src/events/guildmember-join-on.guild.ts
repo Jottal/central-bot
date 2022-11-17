@@ -4,6 +4,12 @@ import { UserSchema } from "@models/Schemas/UserSchema";
 
 const execute = async (member: GuildMember) => {
   try {
+    const user = await UserSchema.findOne({ idDiscord: member.user.id }).exec();
+
+    if (user) {
+      return;
+    }
+
     await new UserSchema({
       idDiscord: member.user.id,
       verified: false,

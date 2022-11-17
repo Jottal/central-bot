@@ -13,8 +13,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
       embeds: [embedAlert],
     });
   } catch (error: any) {
-    error.name = "Erro ao iniciar comando ping";
-    await logError.log(error.name);
+    await logError.log(error);
   }
 };
 

@@ -1,13 +1,14 @@
 import path from "path";
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client, GatewayIntentBits, Partials } from "discord.js";
 import { logError } from "@services/utils/log-error";
 
 const client = new Client({
-  shardCount: 1,
+  partials: [Partials.GuildMember],
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildBans,
   ],
 });
 
@@ -19,8 +20,8 @@ const connect = async () => {
         : process.env.PROD_BOT_TOKEN;
 
     await client.login(TOKEN);
-  } catch (err) {
-    await logError.log(err);
+  } catch (error: any) {
+    await logError.log(error);
   }
 };
 
@@ -30,7 +31,7 @@ type ConnectDiscord = Service & {
 
 const connectDiscord: ConnectDiscord = {
   name: path.basename(__filename, path.extname(__filename)),
-  description: "Service that connects the application to Discord.",
+  description: "Serviço que conecta a aplicação ao Discord.",
   connect,
 };
 

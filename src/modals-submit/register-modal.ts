@@ -5,22 +5,12 @@ import { MinorUserSchema } from "@models/Schemas/MinorUserSchema";
 import { clientUtils } from "@services/utils/client-utils";
 import { identifiers } from "@components/identifiers";
 import { UserSchema } from "@models/Schemas/UserSchema";
-
-const getAge = (birthday: string) => {
-  const today = new Date();
-  const birthDate = new Date(birthday);
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const m = today.getMonth() - birthDate.getMonth();
-
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-
-  return age;
-};
+import { getAge } from "@services/utils/get-age";
+import { sendOnboardingRoles } from "@services/utils/send-onboarding-roles";
 
 const execute = async (interaction: ModalSubmitInteraction) => {
   try {
+    // TODO: Study this code and refactor it.
     const birthday = interaction.components[0] as any;
     const birthdayVal = birthday.components[0].value;
 
@@ -35,7 +25,7 @@ const execute = async (interaction: ModalSubmitInteraction) => {
       return;
     }
 
-    const age = getAge(validDate);
+    const age = getAge.get(validDate);
 
     if (age < 13) {
       await new MinorUserSchema({
@@ -45,9 +35,10 @@ const execute = async (interaction: ModalSubmitInteraction) => {
 
       await interaction.reply({
         content:
-          "Você não mais que 13 anos e não podemos pela política do discord permitir sua entrada no servidor!",
+          "Você não tem mais que 13 anos de idade e não podemos pela política do discord permitir sua entrada no servidor!",
         ephemeral: true,
       });
+      return;
     }
 
     await UserSchema.updateOne(
@@ -55,100 +46,13 @@ const execute = async (interaction: ModalSubmitInteraction) => {
       { verified: true, birthday: validDate }
     ).exec();
 
-    switch (age) {
-      case 13: {
-        await clientUtils.addRole(
-          interaction.user.id,
-          identifiers.central.roles.adventure
-        );
-        await clientUtils.addRole(
-          interaction.user.id,
-          identifiers.central.roles.age13
-        );
-        await interaction.reply({
-          content: "Tudo certo, seja bem vindo à Taverna Central!",
-          ephemeral: true,
-        });
-        break;
-      }
-      case 14: {
-        await clientUtils.addRole(
-          interaction.user.id,
-          identifiers.central.roles.adventure
-        );
-        await clientUtils.addRole(
-          interaction.user.id,
-          identifiers.central.roles.age14
-        );
-        await interaction.reply({
-          content: "Tudo certo, seja bem vindo à Taverna Central!",
-          ephemeral: true,
-        });
-        break;
-      }
-      case 15: {
-        await clientUtils.addRole(
-          interaction.user.id,
-          identifiers.central.roles.adventure
-        );
-        await clientUtils.addRole(
-          interaction.user.id,
-          identifiers.central.roles.age15
-        );
-        await interaction.reply({
-          content: "Tudo certo, seja bem vindo à Taverna Central!",
-          ephemeral: true,
-        });
-        break;
-      }
-      case 16: {
-        await clientUtils.addRole(
-          interaction.user.id,
-          identifiers.central.roles.adventure
-        );
-        await clientUtils.addRole(
-          interaction.user.id,
-          identifiers.central.roles.age16
-        );
-        await interaction.reply({
-          content: "Tudo certo, seja bem vindo à Taverna Central!",
-          ephemeral: true,
-        });
-        break;
-      }
-      case 17: {
-        await clientUtils.addRole(
-          interaction.user.id,
-          identifiers.central.roles.adventure
-        );
-        await clientUtils.addRole(
-          interaction.user.id,
-          identifiers.central.roles.age17
-        );
-        await interaction.reply({
-          content: "Tudo certo, seja bem vindo à Taverna Central!",
-          ephemeral: true,
-        });
-        break;
-      }
-      default: {
-        await clientUtils.addRole(
-          interaction.user.id,
-          identifiers.central.roles.adventure
-        );
-        await clientUtils.addRole(
-          interaction.user.id,
-          identifiers.central.roles.age18
-        );
-        await interaction.reply({
-          content: "Tudo certo, seja bem vindo à Taverna Central!",
-          ephemeral: true,
-        });
-        break;
-      }
-    }
+    await sendOnboardingRoles.send(age, interaction.user.id);
+
+    await interaction.reply({
+      content: "Tudo certo, seja bem vindo à Taverna Central!",
+      ephemeral: true,
+    });
   } catch (error: any) {
-    error.name = "Erro ao iniciar modal de registro";
     await logError.log(error);
   }
 };

@@ -1,6 +1,6 @@
-import fs from "fs";
 import path from "path";
 import { Client } from "discord.js";
+import { fetchFiles } from "@services/utils/fetch-files";
 import { logError } from "@services/utils/log-error";
 
 const eventsFolder = path.join(
@@ -8,25 +8,9 @@ const eventsFolder = path.join(
   process.env.NODE_ENV === "dev" ? "/src/events" : "/dist/events"
 );
 
-const fetchFiles = (filePath: string, previousFiles?: string[]) => {
-  const files = fs.readdirSync(filePath);
-  let currentFiles: string[] = [];
-  if (previousFiles) {
-    currentFiles = previousFiles;
-  }
-  files.forEach((file) => {
-    if (fs.statSync(`${filePath}/${file}`).isDirectory()) {
-      currentFiles = fetchFiles(`${filePath}/${file}`, currentFiles);
-    } else {
-      currentFiles.push(path.join(filePath, "/", file));
-    }
-  });
-  return currentFiles;
-};
-
 const register = async (client: Client) => {
   try {
-    const events = fetchFiles(eventsFolder);
+    const events = fetchFiles.fetch(eventsFolder);
 
     events.forEach(async (value) => {
       const event = (await require(`${value}`).event) as Event;

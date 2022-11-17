@@ -11,7 +11,7 @@ type ValidateDate = Service & {
 
 const validateDate: ValidateDate = {
   name: path.basename(__filename, path.extname(__filename)),
-  description: "Valida se a data está no formato correto.",
+  description: "Serviço que valida se a data está no formato correto.",
   validate,
 };
 

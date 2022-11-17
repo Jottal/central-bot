@@ -1,13 +1,13 @@
 import path from "path";
-import fs from "fs";
 import {
   REST,
   RESTPostAPIApplicationCommandsJSONBody,
   Routes,
 } from "discord.js";
 import centralConfig from "@config/central-config";
-import { logError } from "@services/utils/log-error";
 import { convertCommandToSlash } from "@services/utils/convert-command-to-slash";
+import { fetchFiles } from "@services/utils/fetch-files";
+import { logError } from "@services/utils/log-error";
 
 const commandsFolder = path.join(
   path.resolve(),
@@ -16,26 +16,10 @@ const commandsFolder = path.join(
 
 const commandsList: Command[] = [];
 
-const fetchFiles = (filePath: string, previousFiles?: string[]) => {
-  const files = fs.readdirSync(filePath);
-  let currentFiles: string[] = [];
-  if (previousFiles) {
-    currentFiles = previousFiles;
-  }
-  files.forEach((file) => {
-    if (fs.statSync(`${filePath}/${file}`).isDirectory()) {
-      currentFiles = fetchFiles(`${filePath}/${file}`, currentFiles);
-    } else {
-      currentFiles.push(path.join(filePath, "/", file));
-    }
-  });
-  return currentFiles;
-};
-
 const fetch = async () => {
   try {
     await Promise.all(
-      fetchFiles(commandsFolder).map(async (value) => {
+      fetchFiles.fetch(commandsFolder).map(async (value) => {
         const { command } = await import(value);
         commandsList.push(command);
       })
@@ -46,8 +30,7 @@ const fetch = async () => {
         ? process.env.DEV_BOT_TOKEN
         : process.env.PROD_BOT_TOKEN;
 
-    const config =
-      process.env.NODE_ENV === "dev" ? centralConfig.dev : centralConfig.prod;
+    const config = centralConfig[process.env.NODE_ENV];
 
     const rest = new REST({ version: config.central.version }).setToken(TOKEN);
     const commands: RESTPostAPIApplicationCommandsJSONBody[] = commandsList.map(
@@ -67,8 +50,8 @@ const fetch = async () => {
       "\x1b[42m%s\x1b[0m",
       `✔ [${commandsList.length}] Todos os comandos foram buscados.`
     );
-  } catch (err) {
-    await logError.log(err);
+  } catch (error: any) {
+    await logError.log(error);
   }
 };
 
@@ -78,7 +61,7 @@ type FetchCommands = Service & {
 
 const fetchCommands: FetchCommands = {
   name: path.basename(__filename, path.extname(__filename)),
-  description: "Service that fetches the commands from Discord.",
+  description: "Serviço que busca os comandos do bot.",
   fetch,
 };
 

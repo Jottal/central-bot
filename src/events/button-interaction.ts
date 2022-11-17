@@ -1,6 +1,6 @@
 import { ButtonInteraction, Events } from "discord.js";
-import { logError } from "@services/utils/log-error";
 import { buttonsList } from "@services/setup/fetch-buttons";
+import { logError } from "@services/utils/log-error";
 
 const execute = async (interaction: ButtonInteraction) => {
   try {

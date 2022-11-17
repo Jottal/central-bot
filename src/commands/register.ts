@@ -1,39 +1,30 @@
-import {
-  ActionRowBuilder,
-  ChatInputCommandInteraction,
-  ModalActionRowComponentBuilder,
-  ModalBuilder,
-  TextInputBuilder,
-  TextInputStyle,
-} from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 import { logError } from "@services/utils/log-error";
+import { UserSchema } from "@models/Schemas/UserSchema";
+import { modalRegister } from "@models/ModalRegister";
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
   try {
-    const modal = new ModalBuilder()
-      .setCustomId("register-mig-modal-submit")
-      .setTitle("Registrar");
+    const user = await UserSchema.findOne({
+      idDiscord: interaction.user.id,
+    }).exec();
 
-    const birthdayInput = new TextInputBuilder()
-      .setCustomId("birthday-input")
-      .setLabel("Data de nascimento:")
-      .setPlaceholder("11/05/2002")
-      .setMinLength(10)
-      .setMaxLength(10)
-      .setRequired(true)
-      .setStyle(TextInputStyle.Short);
+    if (!user) {
+      new UserSchema({
+        idDiscord: interaction.user.id,
+        verified: false,
+      }).save();
+    } else if (user.verified) {
+      await interaction.reply({
+        content: "Você já está verificado!",
+        ephemeral: true,
+      });
+      return;
+    }
 
-    const firstActionRow =
-      new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
-        birthdayInput
-      );
-
-    modal.addComponents(firstActionRow);
-
-    await interaction.showModal(modal);
+    await interaction.showModal(modalRegister());
   } catch (error: any) {
-    error.name = "Erro ao iniciar comando ping";
-    await logError.log(error.name);
+    await logError.log(error);
   }
 };
 

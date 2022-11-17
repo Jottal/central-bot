@@ -25,6 +25,7 @@ const execute = async (client: Client) => {
     // await registerChannel.send({ content: "test", components: [row] });
 
     // ==================================================
+    // TEMPORARY CODE TO TEST THE MODAL
 
     console.log(
       "\x1b[44m%s\x1b[0m",
