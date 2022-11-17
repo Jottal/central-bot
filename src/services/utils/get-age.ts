@@ -1,20 +1,23 @@
 import path from "path";
 
-const get = (birthday: string) => {
+const get = (dateString: string) => {
   const today = new Date();
-  const birthDate = new Date(birthday);
+  const dateSplit = dateString.split("/");
+  const birthDate = new Date(
+    Number(dateSplit[2]),
+    Number(dateSplit[1]),
+    Number(dateSplit[0])
+  );
   let age = today.getFullYear() - birthDate.getFullYear();
   const m = today.getMonth() - birthDate.getMonth();
-
   if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-
   return age;
 };
 
 type GetAge = Service & {
-  get: (birthday: string) => number;
+  get: (dateString: string) => number;
 };
 
 const getAge: GetAge = {

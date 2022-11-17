@@ -30,7 +30,8 @@ const fetch = async () => {
         ? process.env.DEV_BOT_TOKEN
         : process.env.PROD_BOT_TOKEN;
 
-    const config = centralConfig[process.env.NODE_ENV];
+    const config =
+      process.env.NODE_ENV === "dev" ? centralConfig.dev : centralConfig.prod;
 
     const rest = new REST({ version: config.central.version }).setToken(TOKEN);
     const commands: RESTPostAPIApplicationCommandsJSONBody[] = commandsList.map(
