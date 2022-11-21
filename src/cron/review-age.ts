@@ -4,6 +4,9 @@ import { UserSchema } from "@models/Schemas/UserSchema";
 import { getAge } from "@services/utils/get-age";
 import { sendOnboardingRoles } from "@services/utils/send-onboarding-roles";
 import { removeAgeRoles } from "@services/utils/remove-age-roles";
+import { identifiers } from "@components/identifiers";
+import { client } from "@services/setup/connection-discord";
+import { TextChannel } from "discord.js";
 
 const reviewAge = async () => {
   const users = await UserSchema.find(
@@ -41,6 +44,13 @@ const reviewAge = async () => {
     await removeAgeRoles.remove(user.lastAge, user.idDiscord);
     await sendOnboardingRoles.send(getAge.get(user.birthday), user.id);
   });
+
+  const logChannels = Object.values(identifiers.central.channels.logs).map(
+    (id) => client.channels.cache.get(id) as TextChannel
+  );
+  logChannels.map((channel) =>
+    channel.send({ content: `Atualizando Aniversários` })
+  );
 };
 
 const start = () =>
