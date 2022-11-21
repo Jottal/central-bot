@@ -47,7 +47,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
     **Discord:** 
     > \`${central.channels.cache.size}\` / 500 Canais
     > \`${central.roles.cache.size}\` / 250 Cargos
-    > \`${central.members.cache.size}\` / 100.000 Usuários Totais
+    > \`${central.memberCount}\` / 100.000 Usuários Totais
 
     **Base de dados:**
     > \`${users.length}\` / Usuários Registrados
