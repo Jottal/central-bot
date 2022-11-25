@@ -5,9 +5,10 @@ const get = (dateString: string) => {
   const dateSplit = dateString.split("/");
   const birthDate = new Date(
     Number(dateSplit[2]),
-    Number(dateSplit[1]),
+    Number(dateSplit[1]) - 1,
     Number(dateSplit[0])
   );
+
   let age = today.getFullYear() - birthDate.getFullYear();
   const m = today.getMonth() - birthDate.getMonth();
   if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
