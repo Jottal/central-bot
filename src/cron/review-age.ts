@@ -8,58 +8,65 @@ import { identifiers } from "@components/identifiers";
 import { client } from "@services/setup/connection-discord";
 import { TextChannel } from "discord.js";
 
-const reviewAge = async () => {
-  const users = await UserSchema.find(
-    { verified: true, birthday: { $ne: null }, lastAge: { $ne: null } },
-    { multi: true }
-  ).exec();
-  const minorUsers = await MinorUserSchema.find({}, { multi: true }).exec();
+const start = async () => {
+  const users = await UserSchema.find({
+    verified: true,
+    birthday: { $ne: null },
+    lastAge: { $ne: null },
+  }).exec();
+  const minorUsers = await MinorUserSchema.find({}).exec();
 
   const usersToUpdate = users.filter((user) => {
     const age = getAge.get(user.birthday);
 
     if (user.lastAge !== age) return user;
   });
+
   const minorUsersToUpdate = minorUsers.filter((minorUser) => {
     const age = getAge.get(minorUser.birthday);
 
     if (minorUser.lastAge !== age) return minorUser;
   });
 
-  await MinorUserSchema.updateMany(
-    { _id: { $in: minorUsersToUpdate.map((minorUser) => minorUser._id) } },
-    { $set: { $inc: { lastAge: 1 } }, multi: true }
-  ).exec();
+  if (usersToUpdate.length > 0) {
+    await UserSchema.updateMany(
+      { _id: { $in: usersToUpdate.map((user) => user._id) } },
+      { $set: { $inc: { lastAge: 1 } } }
+    ).exec();
 
-  await MinorUserSchema.deleteMany({ lastAge: 13 }, { multi: true }).exec();
+    usersToUpdate.forEach(async (user) => {
+      await removeAgeRoles.remove(user.lastAge, user.idDiscord);
+      await sendOnboardingRoles.send(getAge.get(user.birthday), user.id);
+    });
+  }
 
-  // Update users
-  // If have more player implement a timeout to avoid rate limit
-  await UserSchema.updateMany(
-    { _id: { $in: usersToUpdate.map((user) => user._id) } },
-    { $set: { $inc: { lastAge: 1 } } }
-  ).exec();
+  if (minorUsersToUpdate.length > 0) {
+    await MinorUserSchema.updateMany(
+      { _id: { $in: minorUsersToUpdate.map((minorUser) => minorUser._id) } },
+      { $set: { $inc: { lastAge: 1 } } }
+    ).exec();
 
-  users.forEach(async (user) => {
-    await removeAgeRoles.remove(user.lastAge, user.idDiscord);
-    await sendOnboardingRoles.send(getAge.get(user.birthday), user.id);
-  });
+    await MinorUserSchema.deleteMany({ lastAge: 13 }).exec();
+  }
 
-  const logChannels = Object.values(identifiers.central.channels.logs).map(
-    (id) => client.channels.cache.get(id) as TextChannel
-  );
-  logChannels.map((channel) =>
-    channel.send({ content: `Atualizando Aniversários` })
+  const logChannel = client.channels.cache.get(
+    identifiers.central.channels.logs
+  ) as TextChannel;
+  await logChannel.send(
+    `📅 ${usersToUpdate.length} usuários atualizados e ${minorUsersToUpdate.length} usuários menores atualizados.`
   );
 };
 
-const start = () =>
-  cron.schedule("*/1 * * * *", reviewAge, { scheduled: false });
+const startSchedule = () => {
+  cron.schedule(cronJob.cronTime, cronJob.start);
+};
 
 const cronJob: CronJob = {
   name: "Verifica idade",
   description: "Serviço que verifica a idade dos usuários",
+  cronTime: "0 12 * * *",
   start,
+  startSchedule,
 };
 
 export { cronJob };

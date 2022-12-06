@@ -1,4 +1,5 @@
 import path from "path";
+import cron from "node-cron";
 import { fetchFiles } from "@services/utils/fetch-files";
 import { logError } from "@services/utils/log-error";
 
@@ -19,7 +20,7 @@ const fetch = async () => {
     );
 
     cronList.forEach(async (cronJob) => {
-      await cronJob.start();
+      cronJob.startSchedule();
     });
 
     console.log(

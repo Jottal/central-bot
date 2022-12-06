@@ -9,12 +9,10 @@ const log = async (error: any) => {
   try {
     console.log(`\x1b[41m%s\x1b[0m ${error}`, `✖ Erro inesperado: `);
     if (client.isReady()) {
-      const logChannels = Object.values(central.channels.logs).map(
-        (id) => client.channels.cache.get(id) as TextChannel
-      );
-      logChannels.map((channel) =>
-        channel.send({ content: `⚠️ **Erro Inesperado** \`\`\`${error}\`\`\`` })
-      );
+      const logChannel = client.channels.cache.get(
+        central.channels.logs
+      ) as TextChannel;
+      await logChannel.send(`⚠️ **Erro Inesperado** \`\`\`${error}\`\`\``);
     }
   } catch (err) {
     console.log(`\x1b[1m%s\x1b[0m ${err}`, `✖ Erro no log de erros: `);
