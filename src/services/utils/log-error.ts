@@ -7,7 +7,7 @@ const { central } = identifiers;
 
 const log = async (error: any) => {
   try {
-    console.log(`\x1b[41m%s\x1b[0m ${error}`, `✖ Erro inesperado: `);
+    console.error(`\x1b[41m%s\x1b[0m ${error}`, `✖ Erro inesperado: `);
     if (client.isReady()) {
       const logChannel = client.channels.cache.get(
         central.channels.logs

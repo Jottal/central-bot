@@ -7,6 +7,7 @@ import { connectMongoDB } from "@services/setup/connect-mongodb";
 import { fetchButtons } from "@services/setup/fetch-buttons";
 import { fetchModals } from "@services/setup/fetch-modals-submit";
 import { fetchCronJobs } from "@services/setup/start-cron-jobs";
+import { fetchSelects } from "@services/setup/fetch-selects";
 
 config({
   path: path.join(path.resolve(), ".env"),
@@ -17,6 +18,7 @@ const initialize = async () => {
   await fetchCommands.fetch();
   await fetchButtons.fetch();
   await fetchModals.fetch();
+  await fetchSelects.fetch();
   await registerEvents.register(client);
   await connectMongoDB.connect();
   await connectDiscord.connect();

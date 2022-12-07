@@ -13,7 +13,7 @@ import { logError } from "@services/utils/log-error";
 const getRoles = async (guild: Guild, ids: string | string[]) => {
   try {
     if (!Array.isArray(ids)) {
-      return guild.roles.cache.get(ids);
+      return await guild.roles.fetch(ids);
     }
     const resolved = await Promise.all(
       ids.map((id) => guild.roles.cache.get(id))
@@ -28,7 +28,7 @@ const getRoles = async (guild: Guild, ids: string | string[]) => {
 const addRole = async (idMember: string, roleString: string) => {
   try {
     const guild = client.guilds.cache.get(identifiers.central.id);
-    const member = guild.members.cache.get(idMember);
+    const member = await guild.members.fetch(idMember);
     const role = await getRoles(guild, roleString);
 
     await member.roles.add(role);
@@ -41,7 +41,7 @@ const addRole = async (idMember: string, roleString: string) => {
 const removeRole = async (idMember: string, roleString: string) => {
   try {
     const guild = client.guilds.cache.get(identifiers.central.id);
-    const member = guild.members.cache.get(idMember);
+    const member = await guild.members.fetch(idMember);
     const role = await getRoles(guild, roleString);
 
     await member.roles.remove(role);

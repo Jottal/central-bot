@@ -29,21 +29,21 @@ const start = async () => {
   });
 
   if (usersToUpdate.length > 0) {
-    await UserSchema.updateMany(
+    const t = await UserSchema.updateMany(
       { _id: { $in: usersToUpdate.map((user) => user._id) } },
-      { $set: { $inc: { lastAge: 1 } } }
+      { $inc: { lastAge: 1 } }
     ).exec();
 
     usersToUpdate.forEach(async (user) => {
       await removeAgeRoles.remove(user.lastAge, user.idDiscord);
-      await sendOnboardingRoles.send(getAge.get(user.birthday), user.id);
+      await sendOnboardingRoles.send(getAge.get(user.birthday), user.idDiscord);
     });
   }
 
   if (minorUsersToUpdate.length > 0) {
     await MinorUserSchema.updateMany(
       { _id: { $in: minorUsersToUpdate.map((minorUser) => minorUser._id) } },
-      { $set: { $inc: { lastAge: 1 } } }
+      { $inc: { lastAge: 1 } }
     ).exec();
 
     await MinorUserSchema.deleteMany({ lastAge: 13 }).exec();
