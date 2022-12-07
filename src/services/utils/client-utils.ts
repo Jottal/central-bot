@@ -13,7 +13,7 @@ import { logError } from "@services/utils/log-error";
 const getRoles = async (guild: Guild, ids: string | string[]) => {
   try {
     if (!Array.isArray(ids)) {
-      return await guild.roles.fetch(ids);
+      return guild.roles.cache.get(ids);
     }
     const resolved = await Promise.all(
       ids.map((id) => guild.roles.cache.get(id))
