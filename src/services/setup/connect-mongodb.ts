@@ -1,6 +1,6 @@
 import path from "path";
 import Mongoose, { ConnectOptions } from "mongoose";
-import { logError } from "@services/utils/log-error";
+import logError from "@services/utils/log-error";
 
 const connect = async () => {
   try {
@@ -12,12 +12,11 @@ const connect = async () => {
         : process.env.MONGO_DATABASE_PROD;
 
     const MONGODB_URI = `mongodb+srv://${MONGO_DB_USER}:${MONGO_DB_PASS}@central.fm82b.mongodb.net/${DATABASE}?retryWrites=true&w=majority`;
-
     const options: ConnectOptions = {};
 
-    await Mongoose.connect(`${MONGODB_URI}`, options);
-    console.log("\x1b[44m%s\x1b[0m", "✔ Connectado ao MongoDB.");
-  } catch (error: any) {
+    await Mongoose.connect(MONGODB_URI, options);
+    console.log("\x1b[44m%s\x1b[0m", "✔ Connected to MongoDB.");
+  } catch (error) {
     await logError.log(error);
   }
 };
@@ -28,7 +27,8 @@ type ConnectMongoDB = Service & {
 
 const connectMongoDB: ConnectMongoDB = {
   name: path.basename(__filename, path.extname(__filename)),
-  description: "Serviço que conecta a aplicação ao MongoDB pelo Mongoose.",
+  description:
+    "Service that connects the application to MongoDB using Mongoose.",
   connect,
 };
 

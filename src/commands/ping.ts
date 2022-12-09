@@ -1,13 +1,18 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { EmbedAlert } from "@models/EmbedAlert";
-import { logError } from "@services/utils/log-error";
+import logError from "@services/utils/log-error";
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
   try {
+    // Calculate the bot's ping
+    const ping = interaction.client.ws.ping;
+
+    // Create the embed alert
     const title = "Latência Taverna Central";
-    const description = `Pong! A latência é de **${interaction.client.ws.ping}ms**.`;
+    const description = `Pong! A latência é de **${ping}ms**.`;
     const embedAlert = EmbedAlert(title, description);
 
+    // Reply to the user with the embed alert
     await interaction.reply({
       content: `${interaction.member}`,
       embeds: [embedAlert],
@@ -19,7 +24,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 
 const command: Command = {
   name: "ping",
-  description: "Comando que mostra o ping do bot.",
+  description: "Command that shows the bot's ping.",
   execute,
 };
 

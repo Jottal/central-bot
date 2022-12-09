@@ -1,21 +1,20 @@
-import { ModalSubmitInteraction } from "discord.js";
-import { logError } from "@services/utils/log-error";
-import { validateDate } from "@services/utils/validate-date";
+import { GuildMember, ModalSubmitInteraction } from "discord.js";
+import logError from "@services/utils/log-error";
+import validateDate from "@services/utils/validate-date";
 import { MinorUserSchema } from "@models/Schemas/MinorUserSchema";
-import { clientUtils } from "@services/utils/client-utils";
-import { identifiers } from "@components/identifiers";
+import clientUtils from "@services/utils/client-utils";
+import identifiers from "@components/identifiers";
 import { UserSchema } from "@models/Schemas/UserSchema";
-import { getAge } from "@services/utils/get-age";
-import { sendOnboardingRoles } from "@services/utils/send-onboarding-roles";
+import getAge from "@services/utils/get-age";
+import sendOnboardingRoles from "@services/utils/send-onboarding-roles";
 
 const execute = async (interaction: ModalSubmitInteraction) => {
   try {
-    // TODO: Study this code and refactor it.
-    const birthday = interaction.components[0] as any;
-    const birthdayVal = birthday.components[0].value;
+    const birthdayField = interaction.components[0] as any;
+    const birthdayVal = birthdayField.components[0].value;
 
+    // Validate the date
     const validDate = validateDate.validate(birthdayVal);
-
     if (!validDate) {
       await interaction.reply({
         content:
@@ -25,13 +24,20 @@ const execute = async (interaction: ModalSubmitInteraction) => {
       return;
     }
 
+    // Calculate the user's age
     const age = getAge.get(validDate);
 
+    // Check if the user is a minor
     if (age < 13) {
       await new MinorUserSchema({
         idDiscord: interaction.user.id,
         birthday: validDate,
       }).save();
+
+      clientUtils.removeRole(
+        interaction.member as GuildMember,
+        identifiers.central.roles.adventure
+      );
 
       await interaction.reply({
         content:
@@ -41,25 +47,28 @@ const execute = async (interaction: ModalSubmitInteraction) => {
       return;
     }
 
+    // Update the user's profile
     await UserSchema.updateOne(
       { idDiscord: interaction.user.id },
       { verified: true, birthday: validDate }
     ).exec();
 
+    // Send onboarding roles
     await sendOnboardingRoles.send(age, interaction.user.id);
 
+    // Reply to the user
     await interaction.reply({
       content: "Tudo certo, seja bem vindo à Taverna Central!",
       ephemeral: true,
     });
-  } catch (error: any) {
+  } catch (error) {
     await logError.log(error);
   }
 };
 
 const modal: ModalSubmit = {
   name: "register-modal-submit",
-  description: "Modal que finaliza Modal de Registro.",
+  description: "Modal that ends registration modal.",
   execute,
 };
 

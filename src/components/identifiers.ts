@@ -5,4 +5,4 @@ const identifiers = {
   ...(process.env.NODE_ENV === "dev" ? development : production),
 };
 
-export { identifiers };
+export default identifiers;

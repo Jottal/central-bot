@@ -1,19 +1,20 @@
 import { Events, GuildBan } from "discord.js";
-import { logError } from "@services/utils/log-error";
+import logError from "@services/utils/log-error";
 import { UserSchema } from "@models/Schemas/UserSchema";
+
+// TODO: remove user tabletops
 
 const execute = async (ban: GuildBan) => {
   try {
-    // TODO: remover mesas do usuario
     await UserSchema.deleteOne({ idDiscord: ban.user.id }).exec();
-  } catch (error: any) {
+  } catch (error) {
     await logError.log(error);
   }
 };
 
 const event: Event = {
   name: Events.GuildBanAdd,
-  description: "Evento chamado quando um usuário for banido.",
+  description: "Event called when a user is banned.",
   once: false,
   execute,
 };

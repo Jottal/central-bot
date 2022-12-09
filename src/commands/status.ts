@@ -1,19 +1,20 @@
-import {
-  ChatInputCommandInteraction,
-  GuildMemberRoleManager,
-} from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 import { EmbedAlert } from "@models/EmbedAlert";
-import { logError } from "@services/utils/log-error";
-import { identifiers } from "@components/identifiers";
-import { client } from "@services/setup/connection-discord";
+import logError from "@services/utils/log-error";
+import identifiers from "@components/identifiers";
+import { guild } from "@services/setup/connection-discord";
 import { UserSchema } from "@models/Schemas/UserSchema";
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
   try {
-    const userRoles = interaction.member.roles as GuildMemberRoleManager;
-    const hasRole = userRoles.cache.has(identifiers.central.roles.staff);
+    if (!interaction.inCachedGuild()) return;
 
+    // Check if the user has the staff role
+    const hasRole = interaction.member.roles.cache.has(
+      identifiers.central.roles.staff
+    );
     if (!hasRole) {
+      // Show an error message if the user does not have the staff role
       interaction.reply({
         content:
           "Você precisa ser um membro da equipe da Taverna Central para executar este comando.",
@@ -22,15 +23,12 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
       return;
     }
 
-    const central = client.guilds.cache.get(identifiers.central.id);
-
+    // Get the user data from the database
     const users = await UserSchema.find({}, { multi: true }).exec();
-
     const verifiedUsers = await UserSchema.find(
       { verified: true },
       { multi: true }
     ).exec();
-
     const usersAgeAverage = await UserSchema.aggregate([
       {
         $group: {
@@ -40,14 +38,15 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
       },
     ]).exec();
 
+    // Create the embed alert
     const title = "Status da Taverna Central:";
     const description = `
-    ${central.name}:
+    ${guild.name}:
 
     **Discord:** 
-    > \`${central.channels.cache.size}\` / 500 Canais
-    > \`${central.roles.cache.size}\` / 250 Cargos
-    > \`${central.memberCount}\` / 100.000 Usuários Totais
+    > \`${guild.channels.cache.size}\` / 500 Canais
+    > \`${guild.roles.cache.size}\` / 250 Cargos
+    > \`${guild.memberCount}\` / 100.000 Usuários Totais
 
     **Base de dados:**
     > \`${users.length}\` / Usuários Registrados
@@ -56,18 +55,19 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
     `;
     const embedAlert = EmbedAlert(title, description);
 
+    // Reply to the user with the embed alert
     await interaction.reply({
       content: `${interaction.member}`,
       embeds: [embedAlert],
     });
-  } catch (error: any) {
+  } catch (error) {
     await logError.log(error);
   }
 };
 
 const command: Command = {
   name: "status",
-  description: "Comando que mostra os status do servidor.",
+  description: "Command that shows the server's status.",
   execute,
 };
 

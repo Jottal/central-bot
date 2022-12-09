@@ -1,5 +1,5 @@
 import { Events, SelectMenuInteraction } from "discord.js";
-import { logError } from "@services/utils/log-error";
+import logError from "@services/utils/log-error";
 import { selectsList } from "@services/setup/fetch-selects";
 
 const execute = async (interaction: SelectMenuInteraction) => {
@@ -11,7 +11,7 @@ const execute = async (interaction: SelectMenuInteraction) => {
     if (select) {
       select.execute(interaction);
     }
-  } catch (error: any) {
+  } catch (error) {
     await logError.log(error);
   }
 };
@@ -19,7 +19,7 @@ const execute = async (interaction: SelectMenuInteraction) => {
 const event: Event = {
   name: Events.InteractionCreate,
   description:
-    "Evento chamado quando for criado uma interação select com o bot.",
+    "Event called when a select interaction is created with the bot.",
   once: false,
   execute,
 };

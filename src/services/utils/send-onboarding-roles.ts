@@ -1,47 +1,54 @@
 import path from "path";
-import { clientUtils } from "@services/utils/client-utils";
-import { identifiers } from "@components/identifiers";
+import clientUtils from "@services/utils/client-utils";
+import identifiers from "@components/identifiers";
+import { GuildMember } from "discord.js";
 
-const send = async (age: number, memberId: string) => {
-  await clientUtils.addRole(memberId, identifiers.central.roles.adventure);
+/**
+ * Delivers the adventurer and age roles to a user based on their age.
+ *
+ * @param age - The user's age.
+ * @param member - The ID of the user or Guild Member object.
+ */
+const send = async (age: number, member: string | GuildMember) => {
+  await clientUtils.addRole(member, identifiers.central.roles.adventure);
 
   switch (age) {
     case 13: {
-      await clientUtils.addRole(memberId, identifiers.central.roles.age13);
+      await clientUtils.addRole(member, identifiers.central.roles.age13);
       break;
     }
     case 14: {
-      await clientUtils.addRole(memberId, identifiers.central.roles.age14);
+      await clientUtils.addRole(member, identifiers.central.roles.age14);
       break;
     }
     case 15: {
-      await clientUtils.addRole(memberId, identifiers.central.roles.age15);
+      await clientUtils.addRole(member, identifiers.central.roles.age15);
       break;
     }
     case 16: {
-      await clientUtils.addRole(memberId, identifiers.central.roles.age16);
+      await clientUtils.addRole(member, identifiers.central.roles.age16);
       break;
     }
     case 17: {
-      await clientUtils.addRole(memberId, identifiers.central.roles.age17);
+      await clientUtils.addRole(member, identifiers.central.roles.age17);
       break;
     }
     default: {
-      await clientUtils.addRole(memberId, identifiers.central.roles.age18);
+      await clientUtils.addRole(member, identifiers.central.roles.age18);
       break;
     }
   }
 };
 
 type SendOnboardingRoles = Service & {
-  send: (age: number, memberId: string) => Promise<void>;
+  send: (age: number, memberId: string | GuildMember) => Promise<void>;
 };
 
 const sendOnboardingRoles: SendOnboardingRoles = {
   name: path.basename(__filename, path.extname(__filename)),
   description:
-    "Serviço entrega as roles de aventureiro e idade para usuário conforme sua idade.",
+    "Service that delivers the adventurer and age roles to the user based on their age.",
   send,
 };
 
-export { sendOnboardingRoles };
+export default sendOnboardingRoles;

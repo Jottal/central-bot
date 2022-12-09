@@ -1,5 +1,11 @@
 import path from "path";
 
+/**
+ * Returns the age of a user based on their birth date.
+ *
+ * @param dateString - The user's birth date in the format 'dd/mm/yyyy'.
+ * @returns The user's age.
+ */
 const get = (dateString: string) => {
   const today = new Date();
   const dateSplit = dateString.split("/");
@@ -23,9 +29,8 @@ type GetAge = Service & {
 
 const getAge: GetAge = {
   name: path.basename(__filename, path.extname(__filename)),
-  description:
-    "Serviço que converte a data de aniversário para a idade do usuário.",
+  description: "Service that converts the user's birthday to their age.",
   get,
 };
 
-export { getAge };
+export default getAge;

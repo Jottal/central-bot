@@ -1,11 +1,9 @@
-import { identifiers } from "@components/identifiers";
-import { clientUtils } from "@services/utils/client-utils";
+import identifiers from "@components/identifiers";
+import clientUtils from "@services/utils/client-utils";
 import { SelectMenuInteraction } from "discord.js";
 
 const execute = async (interaction: SelectMenuInteraction) => {
-  if (!interaction.inCachedGuild()) {
-    return;
-  }
+  if (!interaction.inCachedGuild()) return;
 
   const member = interaction.member;
   const selected = interaction.values[0];
@@ -27,7 +25,7 @@ const execute = async (interaction: SelectMenuInteraction) => {
 
 const select: SelectMenu = {
   name: "customize-select",
-  description: "Select que troca as cores do perfil do usuário.",
+  description: "Select that changes the user's profile colors.",
   execute,
 };
 

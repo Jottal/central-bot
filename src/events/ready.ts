@@ -1,30 +1,22 @@
-import {
-  ActionRowBuilder,
-  Client,
-  EmbedBuilder,
-  Events,
-  SelectMenuBuilder,
-  TextChannel,
-} from "discord.js";
-import { logError } from "@services/utils/log-error";
-import { identifiers } from "@components/identifiers";
+import { Client, Events } from "discord.js";
+import logError from "@services/utils/log-error";
 
 const execute = async (client: Client) => {
   try {
     console.log(
       "\x1b[44m%s\x1b[0m",
-      `✔ Logado como: ${client.user!.tag}, para ${
+      `✔ Logged in as: ${client.user!.tag}, for ${
         client.guilds.cache.size
-      } servidores.`
+      } servers.`
     );
-  } catch (error: any) {
+  } catch (error) {
     await logError.log(error);
   }
 };
 
 const event: Event = {
   name: Events.ClientReady,
-  description: "Evento chamado uma vez durante a inicialização do bot.",
+  description: "Event called once during bot initialization.",
   once: true,
   execute,
 };

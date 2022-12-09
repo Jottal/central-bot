@@ -8,7 +8,7 @@ import {
 
 const modalRegister = () => {
   const modal = new ModalBuilder()
-    .setCustomId("register-mig-modal-submit")
+    .setCustomId("register-modal-submit")
     .setTitle("Registrar");
 
   const birthdayInput = new TextInputBuilder()

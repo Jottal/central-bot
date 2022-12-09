@@ -1,7 +1,6 @@
 import path from "path";
-import cron from "node-cron";
-import { fetchFiles } from "@services/utils/fetch-files";
-import { logError } from "@services/utils/log-error";
+import fetchFiles from "@services/utils/fetch-files";
+import logError from "@services/utils/log-error";
 
 const cronFolder = path.join(
   path.resolve(),
@@ -12,22 +11,26 @@ const cronList: CronJob[] = [];
 
 const fetch = async () => {
   try {
-    await Promise.all(
-      fetchFiles.fetch(cronFolder).map(async (value) => {
-        const { cronJob } = await import(value);
-        cronList.push(cronJob);
+    const files = fetchFiles.fetch(cronFolder);
+    const importedFiles = await Promise.all(
+      files.map(async (value) => {
+        return await import(value);
       })
     );
 
-    cronList.forEach(async (cronJob) => {
+    importedFiles.forEach((file) => {
+      cronList.push(file.cronJob);
+    });
+
+    cronList.forEach((cronJob) => {
       cronJob.startSchedule();
     });
 
     console.log(
       "\x1b[42m%s\x1b[0m",
-      `✔ [${cronList.length}] Todos os jobs foram iniciados.`
+      `✔ [${cronList.length}] All jobs have been started.`
     );
-  } catch (error: any) {
+  } catch (error) {
     await logError.log(error);
   }
 };
@@ -38,7 +41,7 @@ type FetchCronJobs = Service & {
 
 const fetchCronJobs: FetchCronJobs = {
   name: path.basename(__filename, path.extname(__filename)),
-  description: "Serviço que inicia os cron jobs.",
+  description: "Service that starts the cron jobs.",
   fetch,
 };
 
