@@ -4,6 +4,7 @@ import {
 } from "discord.js";
 import identifiers from "@components/identifiers";
 
+// TODO: Create the command
 const execute = async (
   interaction: ChatInputCommandInteraction | ModalSubmitInteraction
 ) => {};

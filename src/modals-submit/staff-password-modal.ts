@@ -22,6 +22,7 @@ const execute = async (interaction: ModalSubmitInteraction, args: string[]) => {
   const validatePass = await bcrypt.compare(passwordVal, staff.password);
 
   if (validatePass) {
+    await interaction.deferUpdate();
     const command = commandsList.find((c) => c.name === args[0]);
     await command.execute(interaction);
   }
