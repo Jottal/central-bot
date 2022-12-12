@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { EmbedAlert } from "@models/EmbedAlert";
 import logError from "@services/utils/log-error";
+import identifiers from "@components/identifiers";
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
   try {
@@ -25,6 +26,8 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 const command: Command = {
   name: "ping",
   description: "Command that shows the bot's ping.",
+  permissions: [identifiers.central.roles.adventure],
+  needRegister: true,
   execute,
 };
 

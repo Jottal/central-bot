@@ -5,7 +5,9 @@ import identifiers from "@components/identifiers";
 import { guild } from "@services/setup/connection-discord";
 import { UserSchema } from "@models/Schemas/UserSchema";
 
-const execute = async (interaction: ChatInputCommandInteraction) => {
+const execute = async (
+  interaction: ChatInputCommandInteraction | ModalSubmitInteraction
+) => {
   try {
     if (!interaction.inCachedGuild()) return;
 
@@ -68,6 +70,14 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 const command: Command = {
   name: "status",
   description: "Command that shows the server's status.",
+  permissions: [
+    identifiers.central.roles.owner,
+    identifiers.central.roles.manager,
+    identifiers.central.roles.moderator,
+    identifiers.central.roles.staff,
+  ],
+  needRegister: true,
+  isStaffCommand: true,
   execute,
 };
 

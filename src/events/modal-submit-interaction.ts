@@ -6,10 +6,11 @@ const execute = async (interaction: ModalSubmitInteraction) => {
   try {
     if (!interaction.isModalSubmit()) return;
 
-    const modal = modalsList.find((c) => c.name === interaction.customId);
+    const customId = interaction.customId.split("/");
+    const modal = modalsList.find((c) => c.name === customId[0]);
 
     if (modal) {
-      modal.execute(interaction);
+      modal.execute(interaction, [customId[1]]);
     }
   } catch (error) {
     await logError.log(error);

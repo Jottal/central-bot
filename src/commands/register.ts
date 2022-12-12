@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction } from "discord.js";
 import logError from "@services/utils/log-error";
 import { UserSchema } from "@models/Schemas/UserSchema";
 import { modalRegister } from "@models/ModalRegister";
+import identifiers from "@components/identifiers";
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
   try {
@@ -32,8 +33,9 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 };
 
 const command: Command = {
-  name: "register",
+  name: "registrar",
   description: "Command that manually registers a user in our system.",
+  permissions: [identifiers.central.roles.adventure],
   execute,
 };
 
