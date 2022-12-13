@@ -2,6 +2,7 @@ import {
   ActionRowBuilder,
   ChatInputCommandInteraction,
   EmbedBuilder,
+  ModalSubmitInteraction,
   SelectMenuBuilder,
   TextChannel,
 } from "discord.js";
@@ -9,7 +10,9 @@ import logError from "@services/utils/log-error";
 import { client } from "@services/setup/connection-discord";
 import identifiers from "@components/identifiers";
 
-const execute = async (interaction: ChatInputCommandInteraction) => {
+const execute = async (
+  interaction: ChatInputCommandInteraction | ModalSubmitInteraction
+) => {
   const tempChannel = client.channels.cache.get(
     identifiers.central.channels.customize
   ) as TextChannel;
@@ -122,6 +125,8 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 
   try {
     await tempChannel.send({ embeds: [exampleEmbed], components: [row] });
+
+    await interaction.deferReply();
   } catch (error) {
     logError.log(error);
   }

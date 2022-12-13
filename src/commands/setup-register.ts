@@ -37,6 +37,8 @@ const execute = async (
 `,
       components: [row],
     });
+
+    await interaction.deferReply();
   } catch (error) {
     logError.log(error);
   }

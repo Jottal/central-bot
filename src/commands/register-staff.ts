@@ -1,8 +1,21 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import identifiers from "@components/identifiers";
 import { modalRegisterStaffPassword } from "@models/ModalRegisterStaffPassword";
+import { StaffSchema } from "@models/Schemas/StaffSchema";
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
+  const staff = await StaffSchema.findOne({
+    idDiscord: interaction.user.id,
+  }).exec();
+
+  if (staff) {
+    await interaction.reply({
+      content: "Você já está registrado como staff!",
+      ephemeral: true,
+    });
+    return;
+  }
+
   await interaction.showModal(modalRegisterStaffPassword());
 };
 
